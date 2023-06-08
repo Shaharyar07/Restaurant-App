@@ -47,7 +47,7 @@ export default function DrawerContainer(props) {
 
           <MenuButton
             title="Add Recipe"
-            source={require("../../../assets/icons/search.png")}
+            source={require("../../../assets/icons/recipe.png")}
             onPress={() => {
               navigation.navigate("Add Recipe");
               navigation.closeDrawer();
@@ -55,7 +55,7 @@ export default function DrawerContainer(props) {
           />
           <MenuButton
             title="Add Category"
-            source={require("../../../assets/icons/search.png")}
+            source={require("../../../assets/icons/addCategory.png")}
             onPress={() => {
               navigation.navigate("Add Category");
               navigation.closeDrawer();
@@ -64,7 +64,7 @@ export default function DrawerContainer(props) {
 
           <MenuButton
             title="Add Ingrediant"
-            source={require("../../../assets/icons/search.png")}
+            source={require("../../../assets/icons/ingrediants.png")}
             onPress={() => {
               navigation.navigate("Add Ingrediant");
               navigation.closeDrawer();
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: 30,
     height: 30,
-    backgroundColor: "grey", // change later
+    backgroundColor: "white", // change later
   },
   dark: {
     backgroundColor: "black",

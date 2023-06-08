@@ -92,7 +92,13 @@ export default function HomeScreen(props) {
   };
 
   const renderRecipes = ({ item }) => (
-    <View style={{ backgroundColor: theme?.background }}>
+    <View
+      style={{
+        backgroundColor: theme?.background,
+        marginRight: 10,
+        width: "45%",
+      }}
+    >
       <TouchableHighlight
         underlayColor="rgba(73,182,77,0.9)"
         onPress={() => onPressRecipe(item)}
@@ -125,15 +131,17 @@ export default function HomeScreen(props) {
             <Picker.Item label="Cooking time Descending" value="timedesc" />
           </Picker>
         </View>
-
-        <FlatList
-          vertical
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          data={sortedData} // Render the sorted data
-          renderItem={renderRecipes}
-          keyExtractor={(item) => `${item.recipeId}`}
-        />
+        <View style={styles.flatListContainer}>
+          <FlatList
+            style={styles.flatList}
+            vertical
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            data={sortedData} // Render the sorted data
+            renderItem={renderRecipes}
+            keyExtractor={(item) => `${item.recipeId}`}
+          />
+        </View>
       </View>
     </ScrollView>
   );
