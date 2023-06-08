@@ -7,7 +7,9 @@ import {
   Image,
   useColorScheme,
   StyleSheet,
+  ActivityIndicator,
   Button,
+
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -24,10 +26,22 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../../redux/slices/categoriesSlice";
+import { useState } from "react";
+
+ 
+
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen(props) {
+  const theme = useContext(themeContext);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories);
+  const [loading, setLoading] = useState(true);
+
   const theme = useContext(themeContext);
   const [sortedData, setSortedData] = useState(recipes); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
@@ -46,7 +60,34 @@ export default function HomeScreen(props) {
       }
     }
     fetchData();
+
   }, []);
+   useEffect(() => {
+    // setLoading(true);
+
+    dispatch(fetchCategories());
+   },[]);
+  useEffect(() => {
+    console.log("categories: ", categories);
+    if (categories.length > 0) {
+      setLoading(false);
+    }
+  }, [categories]);
+  
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const docRef = collection(db, "demo");
+  //       const docSnap = await getDocs(docRef);
+  //       docSnap.forEach((doc) => {
+  //         console.log(doc.id, " => ", doc.data());
+  //       });
+  //     } catch (err) {
+  //       console.log("error in catch: ", err);
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
 
   const navigation = useNavigation(); // Access the navigation object
 
@@ -115,6 +156,9 @@ export default function HomeScreen(props) {
     </View>
   );
 
+  if (loading) {
+    return <ActivityIndicator />;
+  }
   return (
     <ScrollView>
       <View>
