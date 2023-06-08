@@ -1,13 +1,13 @@
 import React, { useLayoutEffect } from "react";
 import { FlatList, Text, View, TouchableHighlight, Image } from "react-native";
 import styles from "./styles";
-import { getRecipes, getCategoryName } from "../../data/MockDataAPI";
-
+import { categories } from "../../data/dataArrays";
 export default function RecipesListScreen(props) {
   const { navigation, route } = props;
 
   const item = route?.params?.category;
-  const recipesArray = getRecipes(item.id);
+  console.log("item: ", item);
+  // const recipesArray = getRecipes(item.id);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -15,10 +15,6 @@ export default function RecipesListScreen(props) {
       headerRight: () => <View />,
     });
   }, []);
-
-  const onPressRecipe = (item) => {
-    navigation.navigate("Recipe", { item });
-  };
 
   const renderRecipes = ({ item }) => (
     <View
@@ -28,15 +24,15 @@ export default function RecipesListScreen(props) {
       }}
     >
       <TouchableHighlight
-        underlayColor="rgba(73,182,77,0.9)"
-        onPress={() => onPressRecipe(item)}
+        underlayColor='rgba(73,182,77,0.9)'
+        
         style={styles.touchButton}
       >
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.category}>
-            {getCategoryName(item.categoryId)}
+            {/* {getCategoryName(item.categoryId)} */}
           </Text>
         </View>
       </TouchableHighlight>
@@ -49,7 +45,7 @@ export default function RecipesListScreen(props) {
         vertical
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        data={recipesArray}
+        data={categories}
         renderItem={renderRecipes}
         keyExtractor={(item) => `${item.recipeId}`}
       />

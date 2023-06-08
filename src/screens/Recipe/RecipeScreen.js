@@ -9,34 +9,22 @@ import {
 } from "react-native";
 import styles from "./styles";
 import Carousel, { Pagination } from "react-native-snap-carousel";
+import {
+  getIngredientName,
+  getCategoryName,
+  getCategoryById,
+} from "../../data/MockDataAPI";
 import BackButton from "../../components/BackButton/BackButton";
 import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIngredientsButton";
-import { useRecipeContext } from "../../data/RecipeContext";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
 export default function RecipeScreen(props) {
-  const {
-    // useCategoryById,
-    useIngredientName,
-    useIngredientUrl,
-    useCategoryName,
-    useRecipes,
-    useRecipesByIngredient,
-    useNumberOfRecipes,
-    useAllIngredients,
-    useRecipesByIngredientName,
-    useRecipesByCategoryName,
-    useRecipesByRecipeName,
-  } = useRecipeContext();
   const { navigation, route } = props;
-  const { item } = route.params;
-  console.log("route", item.categoryId);
 
-  const category = route.params.item.categoryId;
-  console.log("category", category);
-  const title = item.title;
-  console.log("url", item.photo_url);
+  const item = route.params?.item;
+  const category = getCategoryById(item.categoryId);
+  const title = getCategoryName(category.id);
 
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -56,17 +44,16 @@ export default function RecipeScreen(props) {
     });
   }, []);
 
-  const renderImage = ({item}) => (
-    
+  const renderImage = ({ item }) => (
     <TouchableHighlight>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={{ uri: item.photo_url }} />
+        <Image style={styles.image} source={{ uri: item }} />
       </View>
     </TouchableHighlight>
   );
 
   const onPressIngredient = (item) => {
-    var name = "Desserts";
+    var name = getIngredientName(item);
     let ingredient = item;
     navigation.navigate("Ingredient", { ingredient, name });
   };
@@ -112,7 +99,9 @@ export default function RecipeScreen(props) {
               navigation.navigate("RecipesList", { category, title })
             }
           >
-            <Text style={styles.category}>Cookie</Text>
+            <Text style={styles.category}>
+              {getCategoryName(item.categoryId).toUpperCase()}
+            </Text>
           </TouchableHighlight>
         </View>
 
