@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",
     "@react-native-firebase/app": "~15.4.0",
+    "@react-native-picker/picker": "^2.4.10",
     "@react-navigation/drawer": "^6.5.0",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/stack": "^6.3.2",
@@ -22,6 +23,7 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "^0.69.9",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-event-listeners": "^1.0.7",
     "react-native-gesture-handler": "2.5.0",
     "react-native-reanimated": "~2.9.1",

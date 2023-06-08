@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import {
   FlatList,
   Text,
@@ -8,7 +8,11 @@ import {
   useColorScheme,
   StyleSheet,
   ActivityIndicator,
+  Button,
+
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+
 import { recipes } from "../../data/dataArrays";
 import MenuImage from "../../components/MenuImage/MenuImage";
 import { getCategoryName } from "../../data/MockDataAPI";
@@ -22,9 +26,15 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
+
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../redux/slices/categoriesSlice";
 import { useState } from "react";
+
+ 
+
+import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen(props) {
   const theme = useContext(themeContext);
@@ -32,11 +42,31 @@ export default function HomeScreen(props) {
   const categories = useSelector((state) => state.categories);
   const [loading, setLoading] = useState(true);
 
+  const theme = useContext(themeContext);
+  const [sortedData, setSortedData] = useState(recipes); // State for storing sorted data
+  const [sortOption, setSortOption] = useState("desc"); // State for sorting option
+
   useEffect(() => {
+    console.log(theme);
+    async function fetchData() {
+      try {
+        const docRef = collection(db, "demo");
+        const docSnap = await getDocs(docRef);
+        docSnap.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
+      } catch (err) {
+        console.log("error in catch: ", err);
+      }
+    }
+    fetchData();
+
+  }, []);
+   useEffect(() => {
     // setLoading(true);
 
     dispatch(fetchCategories());
-  }, []);
+   },[]);
   useEffect(() => {
     console.log("categories: ", categories);
     if (categories.length > 0) {
@@ -59,7 +89,7 @@ export default function HomeScreen(props) {
   //   fetchData();
   // }, []);
 
-  const { navigation } = props;
+  const navigation = useNavigation(); // Access the navigation object
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -70,9 +100,32 @@ export default function HomeScreen(props) {
           }}
         />
       ),
-      headerRight: () => <View />,
     });
-  }, []);
+  }, [navigation]);
+
+  const onSortOptionChange = (option) => {
+    console.log(option);
+    setSortOption(option);
+  };
+
+  useEffect(() => {
+    // Sort the data whenever the sort option changes
+    sortData();
+  }, [sortOption]);
+
+  const sortData = () => {
+    const sorted = [...recipes]; // Create a copy of the original data
+    if (sortOption === "asc") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title in ascending order
+    } else if (sortOption === "desc") {
+      sorted.sort((a, b) => b.title.localeCompare(a.title)); // Sort by title in descending order
+    } else if (sortOption === "timeasc") {
+      sorted.sort((a, b) => a.time - b.time); // Sort by cooking time in ascending order
+    } else if (sortOption === "timedesc") {
+      sorted.sort((a, b) => b.time - a.time); // Sort by cooking time in ascending order
+    }
+    setSortedData(sorted);
+  };
 
   const onPressRecipe = (item) => {
     console.log(theme);
@@ -80,9 +133,15 @@ export default function HomeScreen(props) {
   };
 
   const renderRecipes = ({ item }) => (
-    <View style={{ backgroundColor: theme.background }}>
+    <View
+      style={{
+        backgroundColor: theme?.background,
+        marginRight: 10,
+        width: "45%",
+      }}
+    >
       <TouchableHighlight
-        underlayColor='rgba(73,182,77,0.9)'
+        underlayColor="rgba(73,182,77,0.9)"
         onPress={() => onPressRecipe(item)}
         style={styles.touchButton}
       >
@@ -101,21 +160,69 @@ export default function HomeScreen(props) {
     return <ActivityIndicator />;
   }
   return (
-    <View>
-      <FlatList
-        vertical
-        showsVerticalScrollIndicator={false}
-        numColumns={2}
-        data={recipes}
-        renderItem={renderRecipes}
-        keyExtractor={(item) => `${item.recipeId}`}
-      />
-    </View>
+    <ScrollView>
+      <View>
+        <View style={styles.sortContainer}>
+          <Text style={styles.sortText}>Sort:</Text>
+          <Picker
+            selectedValue={sortOption}
+            style={styles.picker}
+            onValueChange={onSortOptionChange}
+          >
+            <Picker.Item label="A ➡️ Z" value="asc" />
+            <Picker.Item label="Z ➡️ A" value="desc" />
+            <Picker.Item label="Cooking time Ascending" value="timeasc" />
+            <Picker.Item label="Cooking time Descending" value="timedesc" />
+          </Picker>
+        </View>
+        <View style={styles.flatListContainer}>
+          <FlatList
+            style={styles.flatList}
+            vertical
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            data={sortedData} // Render the sorted data
+            renderItem={renderRecipes}
+            keyExtractor={(item) => `${item.recipeId}`}
+          />
+        </View>
+      </View>
+    </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
+  sortText: {
+    display: "flex",
+    flex: 1,
+    alignSelf: "center",
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#444444",
+    marginBottom: 10,
+  },
+
+  picker: {
+    display: "flex",
+    width: "50%",
+    flex: 1,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+  },
+
+  sortContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
   touchButton: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 20,
@@ -143,12 +250,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     color: "#444444",
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#444444",
     marginTop: 3,
     marginRight: 5,
     marginLeft: 5,
     width: 150,
   },
-
   category: {
     marginTop: 5,
     marginBottom: 5,
