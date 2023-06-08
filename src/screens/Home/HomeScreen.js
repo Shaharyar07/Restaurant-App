@@ -48,7 +48,7 @@ export default function HomeScreen(props) {
     fetchData();
   }, []);
 
-  const navigation = useNavigation(); // Access the navigation object
+  const navigation = useNavigation(); 
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -68,7 +68,6 @@ export default function HomeScreen(props) {
   };
 
   useEffect(() => {
-    // Sort the data whenever the sort option changes
     sortData();
   }, [sortOption]);
 
@@ -107,6 +106,13 @@ export default function HomeScreen(props) {
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
           <Text style={styles.title}>{item.title}</Text>
+          <View style={styles.infoContainer}>
+          <Image
+            style={styles.infoPhoto}
+            source={require("../../../assets/icons/time.png")}
+          />
+          <Text style={styles.infoRecipe}>{item.time} minutes </Text>
+        </View>
           <Text style={styles.category}>
             {getCategoryName(item.categoryId)}
           </Text>
@@ -148,20 +154,31 @@ export default function HomeScreen(props) {
 }
 
 const styles = StyleSheet.create({
+
+  infoPhoto:{
+    width:"10%",
+    height:"100%",
+    marginRight:5
+  },
+
+  infoContainer: {
+    display:"flex",
+    flexDirection:"row",
+  },
+  
   sortText: {
     display: "flex",
     flex: 1,
     alignSelf: "center",
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "bold",
     color: "#444444",
     marginBottom: 10,
   },
 
   picker: {
     display: "flex",
-    width: "50%",
+    width: "100%",
     flex: 1,
     marginBottom: 8,
     borderWidth: 1,
@@ -170,8 +187,9 @@ const styles = StyleSheet.create({
   },
 
   sortContainer: {
+    margin:20,
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
   },
 

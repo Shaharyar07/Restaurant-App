@@ -13,7 +13,6 @@ export default function App() {
       "changeTheme",
       (data) => {
         setColorMode(data);
-        console.log(data);
       }
     );
     return () => {

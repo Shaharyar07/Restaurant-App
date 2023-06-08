@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import React, { useState,useEffect } from "react";
+import { View, TextInput, Button, StyleSheet, Text,Keyboard, KeyboardAvoidingView,TouchableHighlight } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -16,6 +16,37 @@ const categoryOptions = [
 ];
 
 const AddRecipe = () => {
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      keyboardDidShow
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      setKeyboardOffset(0)
+    );
+  
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const keyboardDidShow = (event) => {
+    setKeyboardVisible(true);
+    setKeyboardOffset(event.endCoordinates.height);
+  };
+  
+  const keyboardDidHide = () => {
+    setKeyboardVisible(false);
+    setKeyboardOffset(0);
+  };
+
+  
+
   const [recipe, setRecipe] = useState({
     recipeId: 122,
     categoryId: "",
@@ -52,15 +83,22 @@ const AddRecipe = () => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <ScrollView contentContainerStyle={[
+      styles.scrollContent,
+      { paddingBottom: keyboardOffset },
+    ]}
+    keyboardShouldPersistTaps="handled">   
+        <View style={styles.container}>
         <Text style={styles.label}>Recipe Name</Text>
+        
         <TextInput
           style={styles.input}
           placeholder="Recipe Title"
           value={recipe.title}
           onChangeText={(value) => handleInputChange("title", value)}
         />
+        
+       
         <Text style={styles.label}>Select Category</Text>
         <Picker
           selectedValue={recipe.categoryId}
@@ -99,13 +137,18 @@ const AddRecipe = () => {
           />
         ))}
 
-        <Button
-          title="Add Photo"
+        <TouchableHighlight
+          underlayColor="rgba(73,182,77,0.9)"
           onPress={() => {
             const updatedPhotos = [...recipe.photosArray, ""];
             handleInputChange("photosArray", updatedPhotos);
           }}
-        />
+          style={styles.buttonContainer}
+        >
+        <View>
+        <Text style={styles.text}>ADD PHOTO</Text>
+        </View>
+        </TouchableHighlight>
 
         <Text style={styles.label}>Time to Make</Text>
         <TextInput
@@ -142,29 +185,69 @@ const AddRecipe = () => {
           </View>
         ))}
 
-        <Button
-          title="Add Ingredient"
+        <TouchableHighlight
+          underlayColor="rgba(73,182,77,0.9)"
           onPress={() => {
             const updatedIngredients = [...recipe.ingredients, ["", ""]];
             handleInputChange("ingredients", updatedIngredients);
           }}
-        />
-        <Text style={styles.label}>Add Description</Text>
-        <TextInput
+          style={styles.buttonContainer}
+        >
+        <View>
+        <Text style={styles.text}>ADD INGREDIENT</Text>
+        </View>
+        </TouchableHighlight>
+       
+
+        <View>
+           <Text style={styles.label}>Add Description</Text>
+          <TextInput
           style={styles.input}
           placeholder="Description"
           value={recipe.description}
           onChangeText={(value) => handleInputChange("description", value)}
           multiline
         />
-
-        <Button title="Submit" onPress={handleSubmit} />
-      </View>
+        </View>
+        <TouchableHighlight
+          underlayColor="rgba(73,182,77,0.9)"
+          onPress={handleSubmit}
+          style={styles.buttonContainer}
+        >
+        <View>
+        <Text style={styles.text}>SUBMIT</Text>
+        </View>
+        </TouchableHighlight>
+      </View>    
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+
+  buttonContainer: {
+    flex: 1,
+    height: 50,
+    width: 170,
+    marginTop: 5,
+    marginLeft: "25%",
+    marginRight: 10,
+    marginBottom:20,
+    borderRadius: 100,
+    borderColor: 'blue',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    fontSize: 14,
+    color: 'blue'
+  },
+
+  submitButton:{
+    color:"red"
+  },
+
   label: {
     marginBottom: 8,
     marginTop: 8,
@@ -196,14 +279,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   ingredientPicker: {
-    flex: 1,
-    marginRight: 8,
+    width:"80%",
+    marginRight: 5,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
   },
   quantityInput: {
-    flex: 1,
+    width:"20%",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
