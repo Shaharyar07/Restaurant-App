@@ -56,7 +56,6 @@ export default function HomeScreen(props) {
     } else {
       setDarkMode(true);
     }
-    console.log(darkMode);
   });
 
   const navigation = useNavigation(); 

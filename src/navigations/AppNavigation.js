@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext,useState,useEffect} from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -14,10 +14,24 @@ import AddRecipe from "../screens/AddMeal/AddRecipe";
 import AddCategory from "../screens/AddCategory/AddCategory";
 import AddIngrediant from "../screens/AddIngrediant/AddIngrediant";
 import { color } from "react-native-reanimated";
+import themeContext from "../screens/Themes/themeContext";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 const Stack = createStackNavigator();
 
 function MainNavigator() {
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+  });
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -30,10 +44,11 @@ function MainNavigator() {
           marginTop: 14,
           
         },
-        // headerTitleStyle :{color:"white"}
+        headerTitleStyle : darkMode? {color:"white"}:null,
+        headerStyle:  darkMode?{ backgroundColor: 'black' } : { backgroundColor: 'white' },
       }}
     >
-      <Stack.Screen  name="Home" component={HomeScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Categories" component={CategoriesScreen} />
       <Stack.Screen name="Recipe" component={RecipeScreen} />
       <Stack.Screen name="RecipesList" component={RecipesListScreen} />

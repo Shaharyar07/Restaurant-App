@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useRef, useState,  } from "react";
+import React, { useLayoutEffect, useRef,useContext,useState,useEffect  } from "react";
 import {
-  ScrollView,
+  SafeAreaView ,
   Text,
   View,
   Image,
@@ -18,10 +18,15 @@ import {
 } from "../../data/MockDataAPI";
 import BackButton from "../../components/BackButton/BackButton";
 import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIngredientsButton";
+import themeContext from "../Themes/themeContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
 export default function RecipeScreen(props) {
+
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false); 
   const { navigation, route } = props;
 
   const item = route.params?.item;
@@ -46,6 +51,15 @@ export default function RecipeScreen(props) {
     });
   }, []);
 
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+  });
+
   const renderImage = ({ item }) => (
     <TouchableHighlight>
       <View style={styles.imageContainer}>
@@ -61,7 +75,10 @@ export default function RecipeScreen(props) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView  style={styles.container}>
+      <ScrollView>
+
+      
       <View style={styles.carouselContainer}>
         <View style={styles.carousel}>
           <Carousel
@@ -116,7 +133,8 @@ export default function RecipeScreen(props) {
           <Text style={styles.infoDescriptionRecipe}>{item.description}</Text>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
