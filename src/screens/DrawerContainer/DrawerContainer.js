@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: 30,
     height: 30,
-    backgroundColor: "white", // change later
+    backgroundColor: "white", 
   },
   dark: {
     backgroundColor: "black",

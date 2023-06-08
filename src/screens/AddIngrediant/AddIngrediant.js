@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text,TouchableHighlight } from "react-native";
 
 const AddIngrediant = () => {
   const [ingredient, setIngredient] = useState({
@@ -33,12 +33,39 @@ const AddIngrediant = () => {
         onChangeText={(value) => handleInputChange("photo_url", value)}
       />
 
-      <Button title="Submit" onPress={handleSubmit} />
+        <TouchableHighlight
+          underlayColor="rgba(73,182,77,0.9)"
+          onPress={handleSubmit}
+          style={styles.buttonContainer}
+        >
+        <View>
+        <Text style={styles.text}>SUBMIT</Text>
+        </View>
+        </TouchableHighlight>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+
+  buttonContainer: {
+    height: 50,
+    width: 170,
+    marginTop: 5,
+    marginLeft: "25%",
+    marginRight: 10,
+    marginBottom:20,
+    borderRadius: 100,
+    borderColor: 'blue',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    fontSize: 14,
+    color: 'blue'
+  },
+
   container: {
     flex: 1,
     padding: 16,

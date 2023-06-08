@@ -244,10 +244,6 @@ const styles = StyleSheet.create({
     color: 'blue'
   },
 
-  submitButton:{
-    color:"red"
-  },
-
   label: {
     marginBottom: 8,
     marginTop: 8,

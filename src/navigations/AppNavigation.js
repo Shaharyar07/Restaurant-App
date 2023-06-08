@@ -13,6 +13,7 @@ import IngredientsDetailsScreen from "../screens/IngredientsDetails/IngredientsD
 import AddRecipe from "../screens/AddMeal/AddRecipe";
 import AddCategory from "../screens/AddCategory/AddCategory";
 import AddIngrediant from "../screens/AddIngrediant/AddIngrediant";
+import { color } from "react-native-reanimated";
 
 const Stack = createStackNavigator();
 
@@ -27,10 +28,12 @@ function MainNavigator() {
         },
         headerTitleContainerStyle: {
           marginTop: 14,
+          
         },
+        // headerTitleStyle :{color:"white"}
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen  name="Home" component={HomeScreen} />
       <Stack.Screen name="Categories" component={CategoriesScreen} />
       <Stack.Screen name="Recipe" component={RecipeScreen} />
       <Stack.Screen name="RecipesList" component={RecipesListScreen} />

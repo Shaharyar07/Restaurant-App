@@ -31,9 +31,10 @@ export default function HomeScreen(props) {
   const theme = useContext(themeContext);
   const [sortedData, setSortedData] = useState(recipes); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
+  const [darkMode, setDarkMode] = useState(false); // State for dark mode 
+  
 
   useEffect(() => {
-    console.log(theme);
     async function fetchData() {
       try {
         const docRef = collection(db, "demo");
@@ -47,6 +48,16 @@ export default function HomeScreen(props) {
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+    console.log(darkMode);
+  });
 
   const navigation = useNavigation(); 
 
@@ -86,18 +97,15 @@ export default function HomeScreen(props) {
   };
 
   const onPressRecipe = (item) => {
-    console.log(theme);
     navigation.navigate("Recipe", { item });
   };
 
   const renderRecipes = ({ item }) => (
     <View
       style={{
-        backgroundColor: theme?.background,
         marginRight: 10,
         width: "45%",
-      }}
-    >
+      }}>
       <TouchableHighlight
         underlayColor="rgba(73,182,77,0.9)"
         onPress={() => onPressRecipe(item)}
@@ -105,15 +113,15 @@ export default function HomeScreen(props) {
       >
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
-          <Text style={styles.title}>{item.title}</Text>
+          <Text style={darkMode? styles.titleDark:styles.title}>{item.title}</Text>
           <View style={styles.infoContainer}>
           <Image
-            style={styles.infoPhoto}
+            style={darkMode? styles.infoPhotoDark:styles.infoPhoto}
             source={require("../../../assets/icons/time.png")}
           />
-          <Text style={styles.infoRecipe}>{item.time} minutes </Text>
+          <Text style={darkMode? styles.infoRecipeDark:styles.infoRecipe}>{item.time} minutes </Text>
         </View>
-          <Text style={styles.category}>
+          <Text style={darkMode? styles.categoryDark:styles.category}>
             {getCategoryName(item.categoryId)}
           </Text>
         </View>
@@ -123,18 +131,19 @@ export default function HomeScreen(props) {
 
   return (
     <ScrollView>
-      <View>
-        <View style={styles.sortContainer}>
-          <Text style={styles.sortText}>Sort:</Text>
+      <View style={darkMode?styles.pageBlack : null}>
+        <View style={darkMode?styles.sortContainerBlack : styles.sortContainer}>
+          <Text style={darkMode? styles.sortTextDark:styles.sortText}>Sort:</Text>
           <Picker
             selectedValue={sortOption}
             style={styles.picker}
             onValueChange={onSortOptionChange}
+            itemStyle={ darkMode? {color:"white"}: null}
           >
-            <Picker.Item label="A ➡️ Z" value="asc" />
-            <Picker.Item label="Z ➡️ A" value="desc" />
+            <Picker.Item label="A → Z" value="asc" />
+            <Picker.Item label="Z → A" value="desc" />
             <Picker.Item label="Cooking time Ascending" value="timeasc" />
-            <Picker.Item label="Cooking time Descending" value="timedesc" />
+            <Picker.Item  label="Cooking time Descending" value="timedesc" />
           </Picker>
         </View>
         <View style={styles.flatListContainer}>
@@ -154,11 +163,25 @@ export default function HomeScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  pageBlack:{
+    backgroundColor:"black",
+  },
+
+  infoRecipeDark:{
+    color:"white",
+  },
 
   infoPhoto:{
     width:"10%",
     height:"100%",
-    marginRight:5
+    marginRight:5,
+  },
+
+  infoPhotoDark:{
+    width:"10%",
+    height:"100%",
+    marginRight:5,
+    backgroundColor:"white",
   },
 
   infoContainer: {
@@ -172,7 +195,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textAlign: "center",
     fontSize: 20,
-    color: "#444444",
+    color: "black",
+    marginBottom: 10,
+  },
+
+  sortTextDark: {
+    color:"white",
+    display: "flex",
+    flex: 1,
+    alignSelf: "center",
+    textAlign: "center",
+    fontSize: 20,
     marginBottom: 10,
   },
 
@@ -186,11 +219,23 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 
+  pickerBlackItem: {
+    color:"white",
+  },
+
   sortContainer: {
     margin:20,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
+  },
+
+  sortContainerBlack: {
+    margin:20,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    backgroundColor: "black",
   },
 
   touchButton: {
@@ -218,15 +263,29 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
+
   title: {
     flex: 1,
     fontSize: 17,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#444444",
+    color: "black",
     fontWeight: "bold",
     textAlign: "center",
-    color: "#444444",
+    marginTop: 3,
+    marginRight: 5,
+    marginLeft: 5,
+    width: 150,
+  },
+  titleDark: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "bold",
+    textAlign: "center",
+   
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "white",
     marginTop: 3,
     marginRight: 5,
     marginLeft: 5,
@@ -235,5 +294,11 @@ const styles = StyleSheet.create({
   category: {
     marginTop: 5,
     marginBottom: 5,
+  },
+
+  categoryDark: {
+    marginTop: 5,
+    marginBottom: 5,
+    color:"white",
   },
 });

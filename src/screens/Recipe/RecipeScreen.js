@@ -6,7 +6,8 @@ import {
   Image,
   Dimensions,
   TouchableHighlight,
-  StyleSheet
+  StyleSheet,
+  StatusBar
 } from "react-native";
 
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -72,23 +73,11 @@ export default function RecipeScreen(props) {
             inactiveSlideScale={1}
             inactiveSlideOpacity={1}
             firstItem={0}
-            loop={false}
-            autoplay={false}
+            loop={true}
+            autoplay={true}
             autoplayDelay={500}
-            autoplayInterval={3000}
+            autoplayInterval={5000}
             onSnapToItem={(index) => setActiveSlide(0)}
-          />
-          <Pagination
-            dotsLength={item.photosArray.length}
-            activeDotIndex={activeSlide}
-            containerStyle={styles.paginationContainer}
-            dotColor="rgba(255, 255, 255, 0.92)"
-            dotStyle={styles.paginationDot}
-            inactiveDotColor="white"
-            inactiveDotOpacity={0.4}
-            inactiveDotScale={0.6}
-            carouselRef={slider1Ref.current}
-            tappableDots={!!slider1Ref.current}
           />
         </View>
       </View>
@@ -134,7 +123,7 @@ export default function RecipeScreen(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    flex: 1
+    flex: 1,
   },
   carouselContainer: {
     minHeight: 250

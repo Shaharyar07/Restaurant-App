@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   btnIcon: {
-    height: 17,
-    width: 17
+    height: 10,
+    width: 20
   }
 });
 
