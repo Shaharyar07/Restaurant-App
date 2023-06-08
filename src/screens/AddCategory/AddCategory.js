@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Text } from "react-native";
-
+import { db } from "../../firebase";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { Alert } from "react-native";
 const AddCategory = () => {
   const [category, setCategory] = useState({
     name: "",
@@ -11,9 +13,16 @@ const AddCategory = () => {
     setCategory({ ...category, [field]: value });
   };
 
-  const handleSubmit = () => {
-    setCategory({ name: "", photo_url: "" });
+  const handleSubmit = async () => {
     console.log(category);
+    try {
+      const docRef = await addDoc(collection(db, "categories"), category);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.log(error);
+    }
+    setCategory({ name: "", photo_url: "" });
+    Alert.alert("Category added successfully");
   };
 
   return (
@@ -21,19 +30,19 @@ const AddCategory = () => {
       <Text style={styles.label}>Category Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Category Name"
+        placeholder='Category Name'
         value={category.name}
         onChangeText={(value) => handleInputChange("name", value)}
       />
       <Text style={styles.label}>Category Photo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Photo URL"
+        placeholder='Photo URL'
         value={category.photo_url}
         onChangeText={(value) => handleInputChange("photo_url", value)}
       />
 
-      <Button title="Submit" onPress={handleSubmit} />
+      <Button title='Submit' onPress={handleSubmit} />
     </View>
   );
 };

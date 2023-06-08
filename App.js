@@ -4,6 +4,7 @@ import AppContainer from "./src/navigations/AppNavigation";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
 import { EventRegister } from "react-native-event-listeners";
+import { RecipeProvider } from "./src/data/RecipeContext";
 
 export default function App() {
   const [colorMode, setColorMode] = useState(false);
@@ -23,7 +24,9 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <AppContainer />
+      <RecipeProvider>
+        <AppContainer />
+      </RecipeProvider>
     </Provider>
   );
 }
