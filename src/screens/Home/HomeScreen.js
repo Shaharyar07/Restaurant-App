@@ -7,13 +7,13 @@ import {
   Image,
   useColorScheme,
   StyleSheet,
+  ActivityIndicator,
   Button,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-
 import { recipes } from "../../data/dataArrays";
 import MenuImage from "../../components/MenuImage/MenuImage";
-import { getCategoryName } from "../../data/MockDataAPI";
+// import { useCategoryName } from "../../data/MockDataAPI";
 import {
   doc,
   collection,
@@ -24,12 +24,38 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../../redux/slices/categoriesSlice";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useRecipeContext } from "../../data/RecipeContext";
+import { fetchIngredients } from "../../redux/slices/ingredientsSlice";
+import { fetchRecipes } from "../../redux/slices/recipesSlice";
 
 export default function HomeScreen(props) {
+  const {
+    useCategoryById,
+    useIngredientName,
+    useIngredientUrl,
+    useCategoryName,
+    useRecipes,
+    useRecipesByIngredient,
+    useNumberOfRecipes,
+    useAllIngredients,
+    useRecipesByIngredientName,
+    useRecipesByCategoryName,
+    useRecipesByRecipeName,
+  } = useRecipeContext();
+
+  const navigation = useNavigation(); // Access the navigation object
   const theme = useContext(themeContext);
-  const [sortedData, setSortedData] = useState(recipes); // State for storing sorted data
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories);
+  const ingredients = useSelector((state) => state.ingredients);
+  const recipes = useSelector((state) => state.recipes);
+
+  const [loading, setLoading] = useState(true);
+  const [sortedData, setSortedData] = useState([]); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
   const [darkMode, setDarkMode] = useState(false); // State for dark mode 
   
@@ -37,17 +63,29 @@ export default function HomeScreen(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const docRef = collection(db, "demo");
+        const docRef = collection(db, "recipes");
         const docSnap = await getDocs(docRef);
         docSnap.forEach((doc) => {
           console.log(doc.id, " => ", doc.data());
         });
+
+        setSortedData(docSnap.docs.map((doc) => doc.data().recipe));
+        setLoading(false);
       } catch (err) {
         console.log("error in catch: ", err);
       }
     }
     fetchData();
   }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   dispatch(fetchIngredients());
+  //   dispatch(fetchRecipes());
+  //   dispatch(fetchCategories());
+  //   if (categories && ingredients && recipes) {
+  //     setLoading(false);
+  //   }
+  // }, [categories, ingredients, recipes]);
 
   useEffect(() => {
     var tempTheme = theme;
@@ -99,6 +137,10 @@ export default function HomeScreen(props) {
     navigation.navigate("Recipe", { item });
   };
 
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
   const renderRecipes = ({ item }) => (
     <View
       style={{
@@ -106,22 +148,15 @@ export default function HomeScreen(props) {
         width: "45%",
       }}>
       <TouchableHighlight
-        underlayColor="rgba(73,182,77,0.9)"
+        underlayColor='rgba(73,182,77,0.9)'
         onPress={() => onPressRecipe(item)}
         style={styles.touchButton}
       >
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
-          <Text style={darkMode? styles.titleDark:styles.title}>{item.title}</Text>
-          <View style={styles.infoContainer}>
-          <Image
-            style={darkMode? styles.infoPhotoDark:styles.infoPhoto}
-            source={require("../../../assets/icons/time.png")}
-          />
-          <Text style={darkMode? styles.infoRecipeDark:styles.infoRecipe}>{item.time} minutes </Text>
-        </View>
-          <Text style={darkMode? styles.categoryDark:styles.category}>
-            {getCategoryName(item.categoryId)}
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.category}>
+            {/* {useCategoryName(item.categoryId)} */}
           </Text>
         </View>
       </TouchableHighlight>
