@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AppContainer from "./src/navigations/AppNavigation";
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
 import { EventRegister } from "react-native-event-listeners";
 
 export default function App() {
   const [colorMode, setColorMode] = useState(false);
 
   useEffect(() => {
-    console.log(colorMode);
-    let eventListner = EventRegister.addEventListener("changeTheme", (data) => {
-      setColorMode(data);
-    });
+    let eventListener = EventRegister.addEventListener(
+      "changeTheme",
+      (data) => {
+        setColorMode(data);
+        console.log(data);
+      }
+    );
     return () => {
-      EventRegister.removeEventListener(eventListner);
+      EventRegister.removeEventListener(eventListener);
     };
-  });
-  return <AppContainer />;
+  }, []);
+
+  return (
+    <Provider store={store}>
+      <AppContainer />
+    </Provider>
+  );
 }
