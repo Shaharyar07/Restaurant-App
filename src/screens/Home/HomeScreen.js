@@ -22,14 +22,6 @@ import {
   deleteField,
   getDocs,
 } from "firebase/firestore";
-import {
-  doc,
-  collection,
-  setDoc,
-  getDoc,
-  deleteField,
-  getDocs,
-} from "firebase/firestore";
 import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
 import { useNavigation } from "@react-navigation/native";
@@ -62,8 +54,6 @@ export default function HomeScreen(props) {
     navigation.setOptions({
       headerLeft: () => (
         <MenuImage
-          onPress={() => {
-            navigation.openDrawer();
           onPress={() => {
             navigation.openDrawer();
           }}
@@ -226,8 +216,6 @@ const styles = StyleSheet.create({
   },
   category: {
     marginTop: 5,
-    marginBottom: 5,
-  },
     marginBottom: 5,
   },
 });
