@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text, Alert } from "react-native";
+import { db } from "../../firebase";
 
 const AddIngrediant = () => {
   const [ingredient, setIngredient] = useState({
@@ -11,9 +13,16 @@ const AddIngrediant = () => {
     setIngredient({ ...ingredient, [field]: value });
   };
 
-  const handleSubmit = () => {
-    setIngredient({ name: "", photo_url: "" });
+  const handleSubmit = async () => {
     console.log(ingredient);
+    try {
+      const docRef = await addDoc(collection(db, "ingredients"), ingredient);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.log(error);
+    }
+    setIngredient({ name: "", photo_url: "" });
+    Alert.alert("Ingredient added successfully");
   };
 
   return (
@@ -21,19 +30,19 @@ const AddIngrediant = () => {
       <Text style={styles.label}>Ingredient Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Ingredient Name"
+        placeholder='Ingredient Name'
         value={ingredient.name}
         onChangeText={(value) => handleInputChange("name", value)}
       />
       <Text style={styles.label}>Ingredient Photo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Photo URL"
+        placeholder='Photo URL'
         value={ingredient.photo_url}
         onChangeText={(value) => handleInputChange("photo_url", value)}
       />
 
-      <Button title="Submit" onPress={handleSubmit} />
+      <Button title='Submit' onPress={handleSubmit} />
     </View>
   );
 };

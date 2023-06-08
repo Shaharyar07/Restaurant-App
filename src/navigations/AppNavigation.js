@@ -13,7 +13,11 @@ import IngredientsDetailsScreen from "../screens/IngredientsDetails/IngredientsD
 import AddRecipe from "../screens/AddMeal/AddRecipe";
 import AddCategory from "../screens/AddCategory/AddCategory";
 import AddIngrediant from "../screens/AddIngrediant/AddIngrediant";
-
+import { useDispatch } from "react-redux";
+import { fetchCategories } from "../redux/slices/categoriesSlice";
+import { fetchIngredients } from "../redux/slices/ingredientsSlice";
+import { fetchRecipes } from "../redux/slices/recipesSlice";
+import { useEffect } from "react";
 const Stack = createStackNavigator();
 
 function MainNavigator() {
@@ -30,18 +34,18 @@ function MainNavigator() {
         },
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Categories" component={CategoriesScreen} />
-      <Stack.Screen name="Recipe" component={RecipeScreen} />
-      <Stack.Screen name="RecipesList" component={RecipesListScreen} />
-      <Stack.Screen name="Ingredient" component={IngredientScreen} />
-      <Stack.Screen name="Search" component={SearchScreen} />
-      <Stack.Screen name="Add Recipe" component={AddRecipe} />
-      <Stack.Screen name="Add Category" component={AddCategory} />
-      <Stack.Screen name="Add Ingrediant" component={AddIngrediant} />
+      <Stack.Screen name='Home' component={HomeScreen} />
+      <Stack.Screen name='Categories' component={CategoriesScreen} />
+      <Stack.Screen name='Recipe' component={RecipeScreen} />
+      <Stack.Screen name='RecipesList' component={RecipesListScreen} />
+      <Stack.Screen name='Ingredient' component={IngredientScreen} />
+      <Stack.Screen name='Search' component={SearchScreen} />
+      <Stack.Screen name='Add Recipe' component={AddRecipe} />
+      <Stack.Screen name='Add Category' component={AddCategory} />
+      <Stack.Screen name='Add Ingrediant' component={AddIngrediant} />
 
       <Stack.Screen
-        name="IngredientsDetails"
+        name='IngredientsDetails'
         component={IngredientsDetailsScreen}
       />
     </Stack.Navigator>
@@ -53,8 +57,8 @@ const Drawer = createDrawerNavigator();
 function DrawerStack() {
   return (
     <Drawer.Navigator
-      drawerPosition="left"
-      initialRouteName="Main"
+      drawerPosition='left'
+      initialRouteName='Main'
       drawerStyle={{
         width: 250,
       }}
@@ -63,12 +67,18 @@ function DrawerStack() {
         <DrawerContainer navigation={navigation} />
       )}
     >
-      <Drawer.Screen name="Main" component={MainNavigator} />
+      <Drawer.Screen name='Main' component={MainNavigator} />
     </Drawer.Navigator>
   );
 }
 
 export default function AppContainer() {
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(fetchCategories());
+  //   dispatch(fetchIngredients());
+  //   dispatch(fetchRecipes());
+  // }, []);
   return (
     <NavigationContainer>
       <DrawerStack />
