@@ -7,7 +7,6 @@ import { EventRegister } from "react-native-event-listeners";
 
 export default function App() {
   const [colorMode, setColorMode] = useState(false);
-
   useEffect(() => {
     let eventListener = EventRegister.addEventListener(
       "changeTheme",
