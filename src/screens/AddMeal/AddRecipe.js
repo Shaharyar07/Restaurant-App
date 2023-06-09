@@ -1,9 +1,10 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useContext } from "react";
 import { View, TextInput, Button, StyleSheet, Text,Keyboard, KeyboardAvoidingView,TouchableHighlight } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { db } from "../../firebase";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import themeContext from "../Themes/themeContext";
 
 const ingredientsList = [
   { id: 0, name: "Salt" },
@@ -19,8 +20,22 @@ const categoryOptions = [
 
 const AddRecipe = () => {
 
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false); 
+
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+  const [recipe, setRecipe] = useState({
+    recipeId: 122,
+    categoryId: "",
+    title: "",
+    photo_url: "",
+    photosArray: [],
+    time: "",
+    ingredients: [],
+    description: "",
+  });
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -47,17 +62,13 @@ const AddRecipe = () => {
     setKeyboardOffset(0);
   };
 
-  
-
-  const [recipe, setRecipe] = useState({
-    recipeId: 122,
-    categoryId: "",
-    title: "",
-    photo_url: "",
-    photosArray: [],
-    time: "",
-    ingredients: [],
-    description: "",
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
   });
 
   const handleInputChange = (field, value) => {
