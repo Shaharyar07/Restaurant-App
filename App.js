@@ -9,7 +9,6 @@ import theme from './src/screens/Themes/theme';
 
 export default function App() {
   const [colorMode, setColorMode] = useState(false);
-
   useEffect(() => {
     let eventListener = EventRegister.addEventListener(
       "changeTheme",
