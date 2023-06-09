@@ -70,11 +70,13 @@ export default function DrawerContainer(props) {
               navigation.closeDrawer();
             }}
           />
-          <MenuButton
-            title="Update Ingrediant"
+          
+
+<MenuButton
+            title="Sort Screen"
             source={require("../../../assets/icons/ingrediants.png")}
             onPress={() => {
-              navigation.navigate("Update Recipe");
+              navigation.navigate("Sort Screen");
               navigation.closeDrawer();
             }}
           />

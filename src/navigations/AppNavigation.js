@@ -21,6 +21,7 @@ import { color } from "react-native-reanimated";
 import themeContext from "../screens/Themes/themeContext";
 import { HeaderBackButton } from "@react-navigation/elements";
 import UpdateRecipe from "../screens/UpdateMeal/UpdateRecipe";
+import SortScreen from "../screens/Sorting/SortScreen";
 
 const Stack = createStackNavigator();
 
@@ -63,6 +64,7 @@ function MainNavigator() {
       <Stack.Screen name='Add Category' component={AddCategory} />
       <Stack.Screen name='Add Ingrediant' component={AddIngrediant} />
       <Stack.Screen name='Update Recipe' component={UpdateRecipe} />
+      <Stack.Screen name='Sort Screen' component={SortScreen} />
       <Stack.Screen
         name='IngredientsDetails'
         component={IngredientsDetailsScreen}

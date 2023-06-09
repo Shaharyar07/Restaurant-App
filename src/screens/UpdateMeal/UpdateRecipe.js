@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Text,Keyboard, KeyboardAvoidingVie
 import { Picker } from "@react-native-picker/picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { db } from "../../firebase";
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc,getDocs, setDoc, updateDoc } from "firebase/firestore";
 
 const ingredientsList = [
   { id: 0, name: "Salt" },
@@ -17,11 +17,12 @@ const categoryOptions = [
   { id: 3, label: "Category 3" },
 ];
 
-const UpdateRecipe = ({route}) => {
+const UpdateRecipe = (props) => {
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { navigation, route } = props;
   const item = route.params.item
 
   const [recipe, setRecipe] = useState({
@@ -73,7 +74,7 @@ const UpdateRecipe = ({route}) => {
 
     console.log(item)
    setLoading(false)
-  })
+  },[])
 
   
 
@@ -107,7 +108,7 @@ const UpdateRecipe = ({route}) => {
 
     console.log("dsak");
     try {
-      const flattenedRecipe = {
+      const recipeNew = {
         ...recipe,
         ingredients: recipe.ingredients.map(([ingredientId, quantity]) => ({
           ingredientId,
@@ -115,13 +116,25 @@ const UpdateRecipe = ({route}) => {
         })),
       };
 
-      const docRef = await updateDoc(collection(db, "recipes"), {
-        recipe: flattenedRecipe,
-      });
+      const docRef = collection(db, "recipes");
+        const docSnap = await getDoc(docRef);
+        docSnap.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
+
+      // const recipeRef = doc(db, "recipes", recipe.recipeId);
+      // const recipeSnapshot = await getDoc(recipeRef);
+      // console.log("from deb", recipeSnapshot)
+      // const data = await getDoc()
+      // const docRef = await updateDoc(collection(db, "recipes"), {
+      //   recipeNew,
+      // });
+
       console.log("Document written with ID: ", docRef.id);
       Alert.alert("Recipe added successfully");
       navigation.navigate("Home");
     } catch (error) {
+      navigation.navigate("Home")
       console.log(error);
     }
   };

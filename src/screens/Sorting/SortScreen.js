@@ -14,14 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import { recipes } from "../../data/dataArrays";
 import MenuImage from "../../components/MenuImage/MenuImage";
 
-import {
-  doc,
-  collection,
-  setDoc,
-  getDoc,
-  deleteField,
-  getDocs,
-} from "firebase/firestore";
+
 import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +25,8 @@ import { useRecipeContext } from "../../data/RecipeContext";
 import { fetchIngredients } from "../../redux/slices/ingredientsSlice";
 import { fetchRecipes } from "../../redux/slices/recipesSlice";
 
-export default function HomeScreen(props) {
+
+export default function SortScreen(props) {
   
 
   const navigation = useNavigation(); // Access the navigation object
@@ -40,31 +34,13 @@ export default function HomeScreen(props) {
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categories);
   const ingredients = useSelector((state) => state.ingredients);
-  const recipes = useSelector((state) => state.recipes);
+ 
 
-  const [loading, setLoading] = useState(true);
+
   const [sortedData, setSortedData] = useState(); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
   const [darkMode, setDarkMode] = useState(false); // State for dark mode 
-  
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const docRef = collection(db, "recipes");
-        const docSnap = await getDocs(docRef);
-        docSnap.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
-        });
-
-        setSortedData(docSnap.docs.map((doc) => doc.data().recipe));
-        setLoading(false);
-      } catch (err) {
-        console.log("error in catch: ", err);
-      }
-    }
-    fetchData();
-  }, []);
+ 
   // useEffect(() => {
   //   setLoading(true);
   //   dispatch(fetchIngredients());
@@ -104,6 +80,7 @@ export default function HomeScreen(props) {
   };
 
   useEffect(() => {
+    console.log(recipes)
     sortData();
   }, [sortOption]);
 
@@ -125,9 +102,7 @@ export default function HomeScreen(props) {
     navigation.navigate("Recipe", { item });
   };
 
-  if (loading) {
-    return <ActivityIndicator />;
-  }
+
 
   const renderRecipes = ({ item }) => (
     <View
@@ -154,7 +129,20 @@ export default function HomeScreen(props) {
   return (
     <ScrollView>
       <View style={darkMode?styles.pageBlack : null}>
-        
+        <View style={darkMode?styles.sortContainerBlack : styles.sortContainer}>
+          <Text style={darkMode? styles.sortTextDark:styles.sortText}>Sort:</Text>
+          <Picker
+            selectedValue={sortOption}
+            style={styles.picker}
+            onValueChange={onSortOptionChange}
+            itemStyle={ darkMode? {color:"white"}: null}
+          >
+            <Picker.Item label="A → Z" value="asc" />
+            <Picker.Item label="Z → A" value="desc" />
+            <Picker.Item label="Cooking time Ascending" value="timeasc" />
+            <Picker.Item  label="Cooking time Descending" value="timedesc" />
+          </Picker>
+        </View>
         <View style={styles.flatListContainer}>
           <FlatList
             style={styles.flatList}
