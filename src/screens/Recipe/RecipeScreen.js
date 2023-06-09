@@ -14,7 +14,7 @@ import Carousel, { Pagination } from "react-native-snap-carousel";
 import {
   getIngredientName,
   getCategoryName,
-  getCategoryById,
+  getCategoryById, 
 } from "../../data/MockDataAPI";
 import BackButton from "../../components/BackButton/BackButton";
 import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIngredientsButton";

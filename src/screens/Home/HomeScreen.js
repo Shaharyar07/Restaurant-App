@@ -33,19 +33,7 @@ import { fetchIngredients } from "../../redux/slices/ingredientsSlice";
 import { fetchRecipes } from "../../redux/slices/recipesSlice";
 
 export default function HomeScreen(props) {
-  const {
-    useCategoryById,
-    useIngredientName,
-    useIngredientUrl,
-    useCategoryName,
-    useRecipes,
-    useRecipesByIngredient,
-    useNumberOfRecipes,
-    useAllIngredients,
-    useRecipesByIngredientName,
-    useRecipesByCategoryName,
-    useRecipesByRecipeName,
-  } = useRecipeContext();
+  
 
   const navigation = useNavigation(); // Access the navigation object
   const theme = useContext(themeContext);
@@ -96,7 +84,7 @@ export default function HomeScreen(props) {
     }
   });
 
-  const navigation = useNavigation(); 
+  // const navigation = useNavigation(); 
 
   useLayoutEffect(() => {
     navigation.setOptions({

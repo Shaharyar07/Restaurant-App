@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { fetchCategories } from "../redux/slices/categoriesSlice";
 import { fetchIngredients } from "../redux/slices/ingredientsSlice";
 import { fetchRecipes } from "../redux/slices/recipesSlice";
-import { useEffect } from "react";import { color } from "react-native-reanimated";
+import { color } from "react-native-reanimated";
 import themeContext from "../screens/Themes/themeContext";
 import { HeaderBackButton } from "@react-navigation/elements";
 
