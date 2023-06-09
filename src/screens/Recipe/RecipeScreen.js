@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   TouchableHighlight,
+  Alert,
   StyleSheet,
   StatusBar,
   TouchableOpacity
@@ -22,6 +23,17 @@ import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIn
 import themeContext from "../Themes/themeContext";
 import { ScrollView } from "react-native-gesture-handler";
 
+import {
+  doc,
+  collection,
+  setDoc,
+  getDoc,
+  deleteDoc,
+  getDocs,
+  where,
+  query,
+} from "firebase/firestore";
+import { db } from "../../firebase";
 const { width: viewportWidth } = Dimensions.get("window");
 
 export default function RecipeScreen(props) {
@@ -37,6 +49,18 @@ export default function RecipeScreen(props) {
   const [activeSlide, setActiveSlide] = useState(0);
 
   const slider1Ref = useRef();
+  const handleDelete = async () => {
+    console.log("delete", item);
+
+    try {
+      await deleteDoc(doc(db, "recipes", item.title)).then(() => {
+        Alert.alert("Recipe deleted!");
+        navigation.goBack();
+      });
+    } catch (e) {
+      console.error("Error removing document: ", e);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -129,6 +153,17 @@ export default function RecipeScreen(props) {
               navigation.navigate("IngredientsDetails", { ingredients, title });
             }}
           />
+          <TouchableOpacity
+            onPress={() => handleDelete()}
+            style={styles.contBtn}
+          >
+            <Text>Delete Recipe</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.infoContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("Update Recipe", { item })} style={styles.contBtn}>
+            <Text  >Edit Recipe</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.infoContainer}>
           <TouchableOpacity onPress={() => navigation.navigate("Update Recipe", { item })} style={styles.contBtn}>

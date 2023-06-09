@@ -28,9 +28,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../redux/slices/categoriesSlice";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useRecipeContext } from "../../data/RecipeContext";
-import { fetchIngredients } from "../../redux/slices/ingredientsSlice";
-import { fetchRecipes } from "../../redux/slices/recipesSlice";
 
 export default function HomeScreen(props) {
   
@@ -43,7 +40,7 @@ export default function HomeScreen(props) {
   const recipes = useSelector((state) => state.recipes);
 
   const [loading, setLoading] = useState(true);
-  const [sortedData, setSortedData] = useState(); // State for storing sorted data
+  const [sortedData, setSortedData] = useState([]); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
   const [darkMode, setDarkMode] = useState(false); // State for dark mode 
   
@@ -64,7 +61,7 @@ export default function HomeScreen(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [recipes,navigation  ]);
   // useEffect(() => {
   //   setLoading(true);
   //   dispatch(fetchIngredients());

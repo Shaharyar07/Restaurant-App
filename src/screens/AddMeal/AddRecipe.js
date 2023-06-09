@@ -18,13 +18,14 @@ const categoryOptions = [
   { id: 3, label: "Category 3" },
 ];
 
-const AddRecipe = () => {
+const AddRecipe = ({ navigation }) => {
 
   const theme = useContext(themeContext);
   const [darkMode, setDarkMode] = useState(false); 
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+
 
   const [recipe, setRecipe] = useState({
     recipeId: 122,
@@ -110,8 +111,8 @@ const AddRecipe = () => {
         recipe: flattenedRecipe,
       });
       console.log("Document written with ID: ", docRef.id);
-      Alert.alert("Recipe added successfully");
       navigation.navigate("Home");
+      Alert.alert("Recipe added successfully");
     } catch (error) {
       console.log(error);
     }
