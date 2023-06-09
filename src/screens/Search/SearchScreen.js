@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState,useContext } from "react";
 import {
   FlatList,
   Text,
@@ -6,8 +6,8 @@ import {
   Image,
   TouchableHighlight,
   Pressable,
+  StyleSheet
 } from "react-native";
-import styles from "./styles";
 import MenuImage from "../../components/MenuImage/MenuImage";
 import {
   getCategoryName,
@@ -16,12 +16,25 @@ import {
   getRecipesByIngredientName,
 } from "../../data/MockDataAPI";
 import { TextInput } from "react-native-gesture-handler";
+import themeContext from "../Themes/themeContext";
 
 export default function SearchScreen(props) {
+
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false); 
   const { navigation } = props;
 
   const [value, setValue] = useState("");
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -90,8 +103,8 @@ export default function SearchScreen(props) {
       >
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.category}>
+          <Text style={darkMode? styles.titleDark:styles.title}>{item.title}</Text>
+          <Text style={darkMode? styles.categoryDark:styles.category}>
             {getCategoryName(item.categoryId)}
           </Text>
         </View>
@@ -100,7 +113,7 @@ export default function SearchScreen(props) {
   );
 
   return (
-    <View>
+    <View style={ darkMode? styles.pageDark: styles.page}>
       <FlatList
         vertical
         showsVerticalScrollIndicator={false}
@@ -112,3 +125,94 @@ export default function SearchScreen(props) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+
+  pageDark:{
+    flex:1,
+    backgroundColor:"black",
+  },
+
+  page:{
+    flex:1,
+    backgroundColor:"white",
+  },
+  btnIcon: {
+    height: 14,
+    width: 14,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EDEDED",
+    borderRadius: 10,
+    width: 250,
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    tintColor: "grey",
+  },
+  searchInput: {
+    backgroundColor: "#EDEDED",
+    color: "black",
+    width: 180,
+    height: 50,
+  },
+  touchButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 20,
+    marginTop: 20,
+    width: 160,
+    height: 225,
+    borderColor: "#cccccc",
+    borderWidth: 0.5,
+    borderRadius: 15,
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+  },
+  photo: {
+    width: 159,
+    height: 150,
+    borderRadius: 15,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  title: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "black",
+    marginTop: 3,
+    marginRight: 5,
+    marginLeft: 5,
+    width: 150,
+  },
+  titleDark: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "white",
+    marginTop: 3,
+    marginRight: 5,
+    marginLeft: 5,
+    width: 150,
+  },
+  category: {
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  categoryDark:{
+    marginTop: 5,
+    marginBottom: 5,
+    color:"white",
+  },
+});
