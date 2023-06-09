@@ -70,6 +70,15 @@ export default function DrawerContainer(props) {
               navigation.closeDrawer();
             }}
           />
+          <MenuButton
+            title="Update Ingrediant"
+            source={require("../../../assets/icons/ingrediants.png")}
+            onPress={() => {
+              navigation.navigate("Update Recipe");
+              navigation.closeDrawer();
+            }}
+          />
+          
           <View style={styles.containerDarkSwitch}>
             <Image
               style={styles.photo}

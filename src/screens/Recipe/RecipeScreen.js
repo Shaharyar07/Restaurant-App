@@ -7,7 +7,8 @@ import {
   Dimensions,
   TouchableHighlight,
   StyleSheet,
-  StatusBar
+  StatusBar,
+  TouchableOpacity
 } from "react-native";
 
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -130,6 +131,11 @@ export default function RecipeScreen(props) {
           />
         </View>
         <View style={styles.infoContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("Update Recipe", { item })} style={styles.contBtn}>
+            <Text  >Edit Recipe</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.infoContainer}>
           <Text style={styles.infoDescriptionRecipe}>{item.description}</Text>
         </View>
       </View>
@@ -190,6 +196,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  contBtn: {
+    flex: 1,
+    height: 50,
+    width: 270,
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 100,
+    borderColor: '#2cd18a',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   infoPhoto: {
     height: 20,

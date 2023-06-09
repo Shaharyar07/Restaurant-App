@@ -20,6 +20,7 @@ import { fetchRecipes } from "../redux/slices/recipesSlice";
 import { color } from "react-native-reanimated";
 import themeContext from "../screens/Themes/themeContext";
 import { HeaderBackButton } from "@react-navigation/elements";
+import UpdateRecipe from "../screens/UpdateMeal/UpdateRecipe";
 
 const Stack = createStackNavigator();
 
@@ -61,7 +62,7 @@ function MainNavigator() {
       <Stack.Screen name='Add Recipe' component={AddRecipe} />
       <Stack.Screen name='Add Category' component={AddCategory} />
       <Stack.Screen name='Add Ingrediant' component={AddIngrediant} />
-
+      <Stack.Screen name='Update Recipe' component={UpdateRecipe} />
       <Stack.Screen
         name='IngredientsDetails'
         component={IngredientsDetailsScreen}
