@@ -28,25 +28,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../redux/slices/categoriesSlice";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useRecipeContext } from "../../data/RecipeContext";
-import { fetchIngredients } from "../../redux/slices/ingredientsSlice";
-import { fetchRecipes } from "../../redux/slices/recipesSlice";
 
 export default function HomeScreen(props) {
-  const {
-    useCategoryById,
-    useIngredientName,
-    useIngredientUrl,
-    useCategoryName,
-    useRecipes,
-    useRecipesByIngredient,
-    useNumberOfRecipes,
-    useAllIngredients,
-    useRecipesByIngredientName,
-    useRecipesByCategoryName,
-    useRecipesByRecipeName,
-  } = useRecipeContext();
-
   const navigation = useNavigation(); // Access the navigation object
   const theme = useContext(themeContext);
   const dispatch = useDispatch();
@@ -55,11 +38,12 @@ export default function HomeScreen(props) {
   const recipes = useSelector((state) => state.recipes);
 
   const [loading, setLoading] = useState(true);
-  const [sortedData, setSortedData] = useState(); // State for storing sorted data
+  const [sortedData, setSortedData] = useState([]); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
 
   useEffect(() => {
     console.log(theme);
+    
     async function fetchData() {
       try {
         const docRef = collection(db, "recipes");
@@ -75,7 +59,7 @@ export default function HomeScreen(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [recipes,navigation  ]);
   // useEffect(() => {
   //   setLoading(true);
   //   dispatch(fetchIngredients());

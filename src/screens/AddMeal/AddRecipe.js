@@ -17,7 +17,7 @@ const categoryOptions = [
   { id: 3, label: "Category 3" },
 ];
 
-const AddRecipe = () => {
+const AddRecipe = ({ navigation }) => {
   const [recipe, setRecipe] = useState({
     recipeId: 122,
     categoryId: "",
@@ -68,8 +68,8 @@ const AddRecipe = () => {
         recipe: flattenedRecipe,
       });
       console.log("Document written with ID: ", docRef.id);
-      Alert.alert("Recipe added successfully");
       navigation.navigate("Home");
+      Alert.alert("Recipe added successfully");
     } catch (error) {
       console.log(error);
     }
