@@ -1,12 +1,61 @@
-import React, { useLayoutEffect } from "react";
-import { FlatList, Text, View, Image, TouchableHighlight } from "react-native";
+import React, { useLayoutEffect, useEffect, useState,useContext } from "react";
+import {
+  FlatList,
+  Text,
+  View,
+  Image,
+  TouchableHighlight,
+  ActivityIndicator,
+  StyleSheet
+} from "react-native";
 import styles from "./styles";
 import { categories } from "../../data/dataArrays";
 import { getNumberOfRecipes } from "../../data/MockDataAPI";
 import MenuImage from "../../components/MenuImage/MenuImage";
+import {
+  doc,
+  collection,
+  setDoc,
+  getDoc,
+  deleteField,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+import themeContext from "../Themes/themeContext";
 
 export default function CategoriesScreen(props) {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false);
   const { navigation } = props;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const docRef = collection(db, "categories");
+        const docSnap = await getDocs(docRef);
+        docSnap.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
+
+        setData(docSnap.docs.map((doc) => doc.data()));
+        setLoading(false);
+      } catch (err) {
+        console.log("error in catch: ", err);
+      }
+    }
+    fetchData();
+  }, []);
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -35,17 +84,83 @@ export default function CategoriesScreen(props) {
 
   const renderCategory = ({ item }) => (
     <TouchableHighlight underlayColor="rgba(73,182,77,0.9)" onPress={() => onPressCategory(item)}>
-      <View style={styles.categoriesItemContainer}>
+      <View style={darkMode? styles.categoriesItemContainerDark : styles.categoriesItemContainer}>
         <Image style={styles.categoriesPhoto} source={{ uri: item.photo_url }} />
-        <Text style={styles.categoriesName}>{item.name}</Text>
-        <Text style={styles.categoriesInfo}>{getNumberOfRecipes(item.id)} recipes</Text>
+        <Text style={darkMode? styles.categoriesNameDark:styles.categoriesName}>{item.name}</Text>
+        <Text style={darkMode? styles.categoriesInfoDark:styles.categoriesInfo}>{getNumberOfRecipes(item.id)} recipes</Text>
       </View>
     </TouchableHighlight>
   );
 
   return (
-    <View>
+    <View style={darkMode? {backgroundColor:"black"}:null}>
       <FlatList data={categories} renderItem={renderCategory} keyExtractor={(item) => `${item.id}`} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  categoriesItemContainer: {
+    flex: 1,
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 215,
+    borderColor: "#cccccc",
+    borderWidth: 0.5,
+    borderRadius: 20,
+  },
+
+  categoriesItemContainerDark: {
+    flex: 1,
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 215,
+    borderColor: "white",
+    borderWidth: 0.5,
+    borderRadius: 20,
+    backgroundColor:"black",
+  },
+
+  categoriesPhoto: {
+    width: "100%",
+    height: 155,
+    borderRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    shadowColor: "blue",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 5,
+    shadowOpacity: 1.0,
+    elevation: 3,
+  },
+  categoriesName: {
+    flex: 1,
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "black",
+    marginTop: 8,
+  },
+  categoriesNameDark: {
+    flex: 1,
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "white",
+    marginTop: 8,
+  },
+  categoriesInfo: {
+    marginTop: 3,
+    marginBottom: 5,
+  },
+  categoriesInfoDark: {
+    marginTop: 3,
+    marginBottom: 5,
+    color:"white",
+  },
+});

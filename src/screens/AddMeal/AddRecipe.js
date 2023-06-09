@@ -2,11 +2,13 @@ import React, { useState,useEffect } from "react";
 import { View, TextInput, Button, StyleSheet, Text,Keyboard, KeyboardAvoidingView,TouchableHighlight } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { ScrollView } from "react-native-gesture-handler";
+import { db } from "../../firebase";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
 const ingredientsList = [
-  { id: 0, name: "Ingredient 1" },
-  { id: 1, name: "Ingredient 2" },
-  { id: 2, name: "Ingredient 3" },
+  { id: 0, name: "Salt" },
+  { id: 1, name: "Sugar" },
+  { id: 2, name: "Oil" },
 ];
 
 const categoryOptions = [
@@ -59,27 +61,49 @@ const AddRecipe = () => {
   });
 
   const handleInputChange = (field, value) => {
-    setRecipe({ ...recipe, [field]: value });
+    setRecipe((prevRecipe) => ({ ...prevRecipe, [field]: value }));
   };
 
   const handleCategoryChange = (value) => {
-    setRecipe({ ...recipe, categoryId: value });
+    setRecipe((prevRecipe) => ({ ...prevRecipe, categoryId: value }));
   };
 
   const handleIngredientChange = (index, ingredientId) => {
-    const updatedIngredients = [...recipe.ingredients];
-    updatedIngredients[index] = [ingredientId, ""];
-    setRecipe({ ...recipe, ingredients: updatedIngredients });
+    setRecipe((prevRecipe) => {
+      const updatedIngredients = [...prevRecipe.ingredients];
+      updatedIngredients[index] = [ingredientId, ""];
+      return { ...prevRecipe, ingredients: updatedIngredients };
+    });
   };
 
   const handleQuantityChange = (index, quantity) => {
-    const updatedIngredients = [...recipe.ingredients];
-    updatedIngredients[index][1] = quantity;
-    setRecipe({ ...recipe, ingredients: updatedIngredients });
+    setRecipe((prevRecipe) => {
+      const updatedIngredients = [...prevRecipe.ingredients];
+      updatedIngredients[index][1] = quantity;
+      return { ...prevRecipe, ingredients: updatedIngredients };
+    });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(recipe);
+    try {
+      const flattenedRecipe = {
+        ...recipe,
+        ingredients: recipe.ingredients.map(([ingredientId, quantity]) => ({
+          ingredientId,
+          quantity,
+        })),
+      };
+
+      const docRef = await addDoc(collection(db, "recipes"), {
+        recipe: flattenedRecipe,
+      });
+      console.log("Document written with ID: ", docRef.id);
+      Alert.alert("Recipe added successfully");
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -93,7 +117,7 @@ const AddRecipe = () => {
         
         <TextInput
           style={styles.input}
-          placeholder="Recipe Title"
+          placeholder='Recipe Title'
           value={recipe.title}
           onChangeText={(value) => handleInputChange("title", value)}
         />
@@ -105,7 +129,7 @@ const AddRecipe = () => {
           style={styles.picker}
           onValueChange={(value) => handleCategoryChange(value)}
         >
-          <Picker.Item label="Select Category" value="" />
+          <Picker.Item label='Select Category' value='' />
           {categoryOptions.map((category) => (
             <Picker.Item
               key={category.id}
@@ -117,7 +141,7 @@ const AddRecipe = () => {
         <Text style={styles.label}>Primary Photo</Text>
         <TextInput
           style={styles.input}
-          placeholder="Photo URL"
+          placeholder='Photo URL'
           value={recipe.photo_url}
           onChangeText={(value) => handleInputChange("photo_url", value)}
         />
@@ -153,12 +177,12 @@ const AddRecipe = () => {
         <Text style={styles.label}>Time to Make</Text>
         <TextInput
           style={styles.input}
-          placeholder="Time"
+          placeholder='Time'
           value={recipe.time}
           onChangeText={(value) => handleInputChange("time", value)}
         />
 
-        <Text style={styles.label}>Select Ingrediants</Text>
+        <Text style={styles.label}>Select Ingredients</Text>
         {recipe.ingredients.map(([ingredientId, quantity], index) => (
           <View key={index} style={styles.ingredientContainer}>
             <Picker
@@ -166,7 +190,7 @@ const AddRecipe = () => {
               selectedValue={ingredientId}
               onValueChange={(value) => handleIngredientChange(index, value)}
             >
-              <Picker.Item label="Select Ingredient" value="" />
+              <Picker.Item label='Select Ingredient' value='' />
               {ingredientsList.map((ingredient) => (
                 <Picker.Item
                   key={ingredient.id}
@@ -178,7 +202,7 @@ const AddRecipe = () => {
 
             <TextInput
               style={styles.quantityInput}
-              placeholder="Quantity"
+              placeholder='Quantity'
               value={quantity}
               onChangeText={(value) => handleQuantityChange(index, value)}
             />
@@ -203,7 +227,7 @@ const AddRecipe = () => {
            <Text style={styles.label}>Add Description</Text>
           <TextInput
           style={styles.input}
-          placeholder="Description"
+          placeholder='Description'
           value={recipe.description}
           onChangeText={(value) => handleInputChange("description", value)}
           multiline
@@ -242,10 +266,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: 'blue'
-  },
-
-  submitButton:{
-    color:"red"
   },
 
   label: {

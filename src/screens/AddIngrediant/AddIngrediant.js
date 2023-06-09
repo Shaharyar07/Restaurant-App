@@ -1,5 +1,6 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text,TouchableHighlight } from "react-native";
 
 const AddIngrediant = () => {
   const [ingredient, setIngredient] = useState({
@@ -11,9 +12,16 @@ const AddIngrediant = () => {
     setIngredient({ ...ingredient, [field]: value });
   };
 
-  const handleSubmit = () => {
-    setIngredient({ name: "", photo_url: "" });
+  const handleSubmit = async () => {
     console.log(ingredient);
+    try {
+      const docRef = await addDoc(collection(db, "ingredients"), ingredient);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.log(error);
+    }
+    setIngredient({ name: "", photo_url: "" });
+    Alert.alert("Ingredient added successfully");
   };
 
   return (
@@ -21,24 +29,51 @@ const AddIngrediant = () => {
       <Text style={styles.label}>Ingredient Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Ingredient Name"
+        placeholder='Ingredient Name'
         value={ingredient.name}
         onChangeText={(value) => handleInputChange("name", value)}
       />
       <Text style={styles.label}>Ingredient Photo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Photo URL"
+        placeholder='Photo URL'
         value={ingredient.photo_url}
         onChangeText={(value) => handleInputChange("photo_url", value)}
       />
 
-      <Button title="Submit" onPress={handleSubmit} />
+        <TouchableHighlight
+          underlayColor="rgba(73,182,77,0.9)"
+          onPress={handleSubmit}
+          style={styles.buttonContainer}
+        >
+        <View>
+        <Text style={styles.text}>SUBMIT</Text>
+        </View>
+        </TouchableHighlight>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+
+  buttonContainer: {
+    height: 50,
+    width: 170,
+    marginTop: 5,
+    marginLeft: "25%",
+    marginRight: 10,
+    marginBottom:20,
+    borderRadius: 100,
+    borderColor: 'blue',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    fontSize: 14,
+    color: 'blue'
+  },
+
   container: {
     flex: 1,
     padding: 16,

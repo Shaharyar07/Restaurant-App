@@ -1,12 +1,13 @@
-import React, { useLayoutEffect, useRef, useState,  } from "react";
+import React, { useLayoutEffect, useRef,useContext,useState,useEffect  } from "react";
 import {
-  ScrollView,
+  SafeAreaView ,
   Text,
   View,
   Image,
   Dimensions,
   TouchableHighlight,
-  StyleSheet
+  StyleSheet,
+  StatusBar
 } from "react-native";
 
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -17,10 +18,15 @@ import {
 } from "../../data/MockDataAPI";
 import BackButton from "../../components/BackButton/BackButton";
 import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIngredientsButton";
+import themeContext from "../Themes/themeContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
 export default function RecipeScreen(props) {
+
+  const theme = useContext(themeContext);
+  const [darkMode, setDarkMode] = useState(false); 
   const { navigation, route } = props;
 
   const item = route.params?.item;
@@ -45,6 +51,15 @@ export default function RecipeScreen(props) {
     });
   }, []);
 
+  useEffect(() => {
+    var tempTheme = theme;
+    if(tempTheme.theme === "light"){
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
+  });
+
   const renderImage = ({ item }) => (
     <TouchableHighlight>
       <View style={styles.imageContainer}>
@@ -60,7 +75,10 @@ export default function RecipeScreen(props) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView  style={styles.container}>
+      <ScrollView>
+
+      
       <View style={styles.carouselContainer}>
         <View style={styles.carousel}>
           <Carousel
@@ -72,23 +90,11 @@ export default function RecipeScreen(props) {
             inactiveSlideScale={1}
             inactiveSlideOpacity={1}
             firstItem={0}
-            loop={false}
-            autoplay={false}
+            loop={true}
+            autoplay={true}
             autoplayDelay={500}
-            autoplayInterval={3000}
+            autoplayInterval={5000}
             onSnapToItem={(index) => setActiveSlide(0)}
-          />
-          <Pagination
-            dotsLength={item.photosArray.length}
-            activeDotIndex={activeSlide}
-            containerStyle={styles.paginationContainer}
-            dotColor="rgba(255, 255, 255, 0.92)"
-            dotStyle={styles.paginationDot}
-            inactiveDotColor="white"
-            inactiveDotOpacity={0.4}
-            inactiveDotScale={0.6}
-            carouselRef={slider1Ref.current}
-            tappableDots={!!slider1Ref.current}
           />
         </View>
       </View>
@@ -127,14 +133,15 @@ export default function RecipeScreen(props) {
           <Text style={styles.infoDescriptionRecipe}>{item.description}</Text>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    flex: 1
+    flex: 1,
   },
   carouselContainer: {
     minHeight: 250
