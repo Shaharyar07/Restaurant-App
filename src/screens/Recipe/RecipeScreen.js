@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   TouchableHighlight,
+  Alert,
 } from "react-native";
 import styles from "./styles";
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -17,6 +18,17 @@ import {
 import BackButton from "../../components/BackButton/BackButton";
 import ViewIngredientsButton from "../../components/ViewIngredientsButton/ViewIngredientsButton";
 
+import {
+  doc,
+  collection,
+  setDoc,
+  getDoc,
+  deleteDoc,
+  getDocs,
+  where,
+  query,
+} from "firebase/firestore";
+import { db } from "../../firebase";
 const { width: viewportWidth } = Dimensions.get("window");
 
 export default function RecipeScreen(props) {
@@ -29,6 +41,18 @@ export default function RecipeScreen(props) {
   const [activeSlide, setActiveSlide] = useState(0);
 
   const slider1Ref = useRef();
+  const handleDelete = async () => {
+    console.log("delete", item);
+
+    try {
+      await deleteDoc(doc(db, "recipes", item.title)).then(() => {
+        Alert.alert("Recipe deleted!");
+        navigation.goBack();
+      });
+    } catch (e) {
+      console.error("Error removing document: ", e);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -121,6 +145,12 @@ export default function RecipeScreen(props) {
               navigation.navigate("IngredientsDetails", { ingredients, title });
             }}
           />
+          <TouchableOpacity
+            onPress={() => handleDelete()}
+            style={styles.contBtn}
+          >
+            <Text>Delete Recipe</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.infoDescriptionRecipe}>{item.description}</Text>
