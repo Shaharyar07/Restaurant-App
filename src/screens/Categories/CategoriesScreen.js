@@ -1,16 +1,53 @@
-import React, { useLayoutEffect,useState,useEffect,useContext } from "react";
-import { FlatList, Text, View, Image, TouchableHighlight,StyleSheet } from "react-native";
+import React, { useLayoutEffect, useEffect, useState,useContext } from "react";
+import {
+  FlatList,
+  Text,
+  View,
+  Image,
+  TouchableHighlight,
+  ActivityIndicator,
+  StyleSheet
+} from "react-native";
+import styles from "./styles";
 import { categories } from "../../data/dataArrays";
 import { getNumberOfRecipes } from "../../data/MockDataAPI";
 import MenuImage from "../../components/MenuImage/MenuImage";
+import {
+  doc,
+  collection,
+  setDoc,
+  getDoc,
+  deleteField,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "../../firebase";
 import themeContext from "../Themes/themeContext";
 
 export default function CategoriesScreen(props) {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
 
   const theme = useContext(themeContext);
   const [darkMode, setDarkMode] = useState(false);
   const { navigation } = props;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const docRef = collection(db, "categories");
+        const docSnap = await getDocs(docRef);
+        docSnap.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
 
+        setData(docSnap.docs.map((doc) => doc.data()));
+        setLoading(false);
+      } catch (err) {
+        console.log("error in catch: ", err);
+      }
+    }
+    fetchData();
+  }, []);
   useEffect(() => {
     var tempTheme = theme;
     if(tempTheme.theme === "light"){

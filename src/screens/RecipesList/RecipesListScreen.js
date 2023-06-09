@@ -3,6 +3,7 @@ import { StyleSheet, FlatList, Text, View, TouchableHighlight, Image } from "rea
 import { RecipeCard } from "../../AppStyles";
 import { getRecipes, getCategoryName } from "../../data/MockDataAPI";
 import themeContext from "../Themes/themeContext";
+import { categories } from "../../data/dataArrays";
 
 export default function RecipesListScreen(props) {
 
@@ -11,7 +12,8 @@ export default function RecipesListScreen(props) {
   const { navigation, route } = props;
 
   const item = route?.params?.category;
-  const recipesArray = getRecipes(item.id);
+  console.log("item: ", item);
+  // const recipesArray = getRecipes(item.id);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -37,15 +39,15 @@ export default function RecipesListScreen(props) {
     <View style={{marginRight: 10,
       width: "45%",}}>
       <TouchableHighlight
-        underlayColor="rgba(73,182,77,0.9)"
-        onPress={() => onPressRecipe(item)}
+        underlayColor='rgba(73,182,77,0.9)'
+        
         style={styles.touchButton}
       >
         <View style={styles.container}>
           <Image style={styles.photo} source={{ uri: item.photo_url }} />
           <Text style={darkMode? styles.titleDark:styles.title}>{item.title}</Text>
           <Text style={darkMode? styles.categoryDark:styles.category}>
-            {getCategoryName(item.categoryId)}
+            {/* {getCategoryName(item.categoryId)} */}
           </Text>
         </View>
       </TouchableHighlight>
@@ -58,7 +60,7 @@ export default function RecipesListScreen(props) {
         vertical
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        data={recipesArray}
+        data={categories}
         renderItem={renderRecipes}
         keyExtractor={(item) => `${item.recipeId}`}
       />

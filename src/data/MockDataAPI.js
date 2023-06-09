@@ -1,112 +1,131 @@
-import { useSelector } from "react-redux";
+import { Text } from "react-native";
+import React, { Component } from "react";
+import { recipes, categories, ingredients } from "./dataArrays";
 
-export function useCategoryById(categoryId) {
-  const categories = useSelector((state) => state.categories);
-  const category = categories.find((data) => data.id === categoryId);
+export function getCategoryById(categoryId) {
+  let category;
+  categories.map((data) => {
+    if (data.id == categoryId) {
+      category = data;
+    }
+  });
   return category;
 }
 
-export function useIngredientName(ingredientId) {
-  const ingredients = useSelector((state) => state.ingredients);
-  const ingredient = ingredients.find(
-    (data) => data.ingredientId === ingredientId
-  );
-  return ingredient ? ingredient.name : "";
-}
-
-export function useIngredientUrl(ingredientId) {
-  const ingredients = useSelector((state) => state.ingredients);
-  const ingredient = ingredients.find(
-    (data) => data.ingredientId === ingredientId
-  );
-  return ingredient ? ingredient.photo_url : "";
-}
-
-export function useCategoryName(categoryId) {
-  const categories = useSelector((state) => state.categories);
-  const category = categories.find((data) => data.id === categoryId);
-  return category ? category.name : "";
-}
-
-export function useRecipes(categoryId) {
-  const recipes = useSelector((state) => state.recipes);
-  return recipes.filter((data) => data.categoryId === categoryId);
-}
-
-export function useRecipesByIngredient(ingredientId) {
-  const recipes = useSelector((state) => state.recipes);
-  return recipes.filter((data) => {
-    return data.ingredients.some((index) => index[0] === ingredientId);
-  });
-}
-
-export function useNumberOfRecipes(categoryId) {
-  const recipes = useSelector((state) => state.recipes);
-  return recipes.reduce((count, data) => {
-    if (data.categoryId === categoryId) {
-      return count + 1;
+export function getIngredientName(ingredientID) {
+  let name;
+  ingredients.map((data) => {
+    if (data.ingredientId == ingredientID) {
+      name = data.name;
     }
-    return count;
-  }, 0);
-}
-
-export function useAllIngredients(idArray) {
-  const ingredients = useSelector((state) => state.ingredients);
-  return idArray.map((index) => {
-    const ingredient = ingredients.find(
-      (data) => data.ingredientId === index[0]
-    );
-    return [ingredient, index[1]];
   });
+  return name;
 }
 
-export function useRecipesByIngredientName(ingredientName) {
+export function getIngredientUrl(ingredientID) {
+  let url;
+  ingredients.map((data) => {
+    if (data.ingredientId == ingredientID) {
+      url = data.photo_url;
+    }
+  });
+  return url;
+}
+
+export function getCategoryName(categoryId) {
+  let name;
+  categories.map((data) => {
+    if (data.id == categoryId) {
+      name = data.name;
+    }
+  });
+  return name;
+}
+
+export function getRecipes(categoryId) {
+  const recipesArray = [];
+  recipes.map((data) => {
+    if (data.categoryId == categoryId) {
+      recipesArray.push(data);
+    }
+  });
+  return recipesArray;
+}
+
+// modifica
+export function getRecipesByIngredient(ingredientId) {
+  const recipesArray = [];
+  recipes.map((data) => {
+    data.ingredients.map((index) => {
+      if (index[0] == ingredientId) {
+        recipesArray.push(data);
+      }
+    });
+  });
+  return recipesArray;
+}
+
+export function getNumberOfRecipes(categoryId) {
+  let count = 0;
+  recipes.map((data) => {
+    if (data.categoryId == categoryId) {
+      count++;
+    }
+  });
+  return count;
+}
+
+export function getAllIngredients(idArray) {
+  const ingredientsArray = [];
+  idArray.map((index) => {
+    ingredients.map((data) => {
+      if (data.ingredientId == index[0]) {
+        ingredientsArray.push([data, index[1]]);
+      }
+    });
+  });
+  return ingredientsArray;
+}
+
+// functions for search
+export function getRecipesByIngredientName(ingredientName) {
   const nameUpper = ingredientName.toUpperCase();
-  const ingredients = useSelector((state) => state.ingredients);
-  const recipes = useSelector((state) => state.recipes);
-
-  const filteredIngredients = ingredients.filter((data) =>
-    data.name.toUpperCase().includes(nameUpper)
-  );
-
   const recipesArray = [];
-  filteredIngredients.forEach((data) => {
-    const filteredRecipes = useRecipesByIngredient(data.ingredientId);
-    filteredRecipes.forEach((item) => {
-      if (!recipesArray.includes(item)) {
+  ingredients.map((data) => {
+    if (data.name.toUpperCase().includes(nameUpper)) {
+      // data.name.yoUpperCase() == nameUpper
+      const recipes = getRecipesByIngredient(data.ingredientId);
+      const unique = [...new Set(recipes)];
+      unique.map((item) => {
         recipesArray.push(item);
-      }
-    });
+      });
+    }
   });
-
-  return recipesArray;
+  const uniqueArray = [...new Set(recipesArray)];
+  return uniqueArray;
 }
 
-export function useRecipesByCategoryName(categoryName) {
+export function getRecipesByCategoryName(categoryName) {
   const nameUpper = categoryName.toUpperCase();
-  const categories = useSelector((state) => state.categories);
-  const recipes = useSelector((state) => state.recipes);
-
-  const filteredCategories = categories.filter((data) =>
-    data.name.toUpperCase().includes(nameUpper)
-  );
-
   const recipesArray = [];
-  filteredCategories.forEach((data) => {
-    const filteredRecipes = useRecipes(data.id);
-    filteredRecipes.forEach((item) => {
-      if (!recipesArray.includes(item)) {
+  categories.map((data) => {
+    if (data.name.toUpperCase().includes(nameUpper)) {
+      const recipes = getRecipes(data.id); // return a vector of recipes
+      recipes.map((item) => {
         recipesArray.push(item);
-      }
-    });
+      });
+    }
   });
-
   return recipesArray;
 }
 
-export function useRecipesByRecipeName(recipeName) {
+export function getRecipesByRecipeName(recipeName) {
   const nameUpper = recipeName.toUpperCase();
-  const recipes = useSelector((state) => state.recipes);
-
-  return recipes.filter((data) => data.title.toUpperCase().includes(nameUpper));
+  const recipesArray = [];
+  recipes.map((data) => {
+    if (data.title.toUpperCase().includes(nameUpper)) {
+      recipesArray.push(data);
+    }
+  });
+  return recipesArray;
 }

@@ -13,7 +13,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { recipes } from "../../data/dataArrays";
 import MenuImage from "../../components/MenuImage/MenuImage";
-// import { useCategoryName } from "../../data/MockDataAPI";
+
 import {
   doc,
   collection,
@@ -43,7 +43,7 @@ export default function HomeScreen(props) {
   const recipes = useSelector((state) => state.recipes);
 
   const [loading, setLoading] = useState(true);
-  const [sortedData, setSortedData] = useState([]); // State for storing sorted data
+  const [sortedData, setSortedData] = useState(); // State for storing sorted data
   const [sortOption, setSortOption] = useState("desc"); // State for sorting option
   const [darkMode, setDarkMode] = useState(false); // State for dark mode 
   
